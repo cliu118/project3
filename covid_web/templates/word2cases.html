@@ -1,0 +1,189 @@
+{% extends  "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="ui container segment">
+            <div class="ui container">
+                <form class="ui form" method="get" id="option_form">
+                    <div class="ui form">
+
+
+                        <div class="four fields">            
+                            <div class="field">
+                              <label>start_date</label>
+                              <input type="text" name="start_date" id="start_date" value="{{selected_start_date}}" placeholder="start_date...">
+                            </div>                      
+
+                            <div class="field">
+                                <label>date_interval</label>
+                                <input type="text" name="date_interval" id="date_interval" value="{{selected_date_interval}}" min="0" max="90" placeholder="date_interval...">
+                            </div>    
+                            
+                            <div class="field">
+                                <label>word</label>
+                                <input type="text" name="word" id="word" value="{{selected_word}}" placeholder="word...">
+                              </div>                             
+                        </div>                    
+
+                        <div class="one fields">
+                            <div class="field">                            
+                                <button class="ui button" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>       
+
+    <style type="text/css">
+        #tableArea .dataTables_wrapper {
+            position: relative;
+            clear: both;
+            zoom: 1;
+            overflow-x: auto;
+        }
+
+        #tableArea table{
+            width: 800px;
+        }
+    </style>
+
+    <div class="row">
+        <div class="ui container segment">
+            <div class="ui container">
+                <div id="echart_id" style="height:600px;border:0px solid #ccc;padding:1px;"></div>        
+                <!-- echarts start -->
+                <script type="text/javascript">
+                    var fields_list = eval({{fields_list|safe}});
+                    var legend_list = new Array();
+                    for(var id in fields_list) {
+                        legend_list.push(fields_list[id]);
+                    }
+
+                    var chart_dict = eval({{chart_data|safe}})[0];
+                    var series_list = new Array();
+                    for (var key in chart_dict) {
+
+                        var set = {};
+                        set.name = key;
+                        set.type = 'line';
+                        set.data = chart_dict[key];
+                        series_list.push(set);                
+                        
+                    }
+
+                    var myChart = echarts.init(document.getElementById('echart_id'));         
+                    var chart_info_dict = {
+                        title : {
+                            text : 'data of {{selected_date_interval}} days',
+                            subtext : '',
+                            x : 'center'
+                        },
+                        tooltip : {
+                            trigger: 'axis'
+                        },
+                        animation : false,
+                        legend: {
+                           type: 'scroll',
+                            bottom: '10%',
+                            data: legend_list,
+                            selected: {}   
+                        },
+                        toolbox: {
+                            show : true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                dataZoom : {show: true},
+                                magicType : {show: true, type: ['line', 'bar']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        dataZoom: {
+                            y : 550,
+                            show : true,
+                            realtime : true,
+                            start : 0,
+                            end : 100
+                        },
+                        grid:{'y2':150},
+                        xAxis : [
+                        {
+                            boundaryGap : false,
+                            axisLine: {onZero: false},
+                            data: chart_dict["date"]
+                        }
+                        ],
+                        yAxis : 
+                        {
+                            name : 'increment / frequency',
+                            type : 'value'
+                        },
+                        series: series_list,
+                    }; 
+                 
+                    for(var id in legend_list) {
+                        if (id != 0) {
+                            chart_info_dict.legend.selected[legend_list[id]] = false;
+                        } else {
+                            chart_info_dict.legend.selected[legend_list[id]] = true;
+                        }
+                    }
+
+                    myChart.setOption(chart_info_dict);     
+                </script>
+                <!-- echarts end -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="ui container segment">
+            <div class="ui container">
+            
+                <div class="ui mini statistic">
+                  <div class="label">
+                    word frequency v.s covid19 cases in {{selected_date_interval}} days
+                  </div>
+                  <div class="value">
+                     {{total_freq}} - {{total_increment}}
+                  </div>
+                </div>
+
+                <!-- datatables start -->
+                <div id="tableArea">
+                    <table id="table_id" class="table table-bordered table-hover stripe" style="white-space: nowrap; ">
+                        <thead>
+                            <tr>
+                                {% for item in fields_data %}
+                                <th>{{ item }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>                          
+                            {% for line in table_data %}
+                            <tr>
+                                {% for item in line %}
+                                <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>                
+                    <script type="text/javascript">
+                        $(document).ready( function () {
+                            $('#table_id').dataTable({
+                                "paging": false, 
+                                "ordering": false,
+                                "bInfo" : false,
+                            });
+                        } );
+                    </script>
+                </div>
+                <!-- datatables end -->                
+            </div>
+        </div>
+    </div>    
+
+{% endblock %}

@@ -1,0 +1,5 @@
+# Covid tweets analyze
+
+data source: https://www.kaggle.com/gpreda/covid19-tweets
+
+usage: python covid_mr.py

@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>covid19_platform</title>
+
+    <!-- semantics, dataTables and echarts -->
+    <script type="text/javascript" src="{%static 'js/jquery-1.11.1.js' %}"></script>    
+    <script type="text/javascript" src="{%static 'js/semantic.min.js' %}"></script>    
+    <link rel="stylesheet" href="{%static 'css/semantic.min.css' %}">
+
+    <script type="text/javascript" src="{%static 'js/jquery.dataTables.min.js' %}"></script>
+    <link rel="stylesheet" href="{%static 'css/jquery.dataTables.min.css' %}">
+    <script src="{%static 'js/echarts.common.min.js' %}"></script> 
+</head>
+<body>
+  <div class="ui visible left sidebar inverted vertical menu">
+
+    <div class="item">
+      <div class="header"><a href="/home">HOME</a></div>
+    </div>
+
+    <div class="item">
+      <div class="header">tweet data analyze</div>
+      <div class="menu">
+        <a class="item" href="/word2cases">word frequency v.s. covid cases increment</a>            
+      </div>
+      <div class="menu">
+        <a class="item" href="/word_date2follower">user(high influence) with most followers</a>            
+      </div>    
+      <div class="menu">
+        <a class="item" href="/word_date2desc">user(maybe officail) and description</a>            
+      </div>   
+      <div class="menu">
+        <a class="item" href="/word_date2friend">user(high potential)with 10k~100k friend</a>            
+      </div>                
+    </div>
+
+  </div>
+  <div class="pusher">
+    <!-- 页面内容 -->
+    <div class="ui equal width grid">
+    {% block content %}{% endblock %}
+    </div>
+  </div>
+</body>
+</html>
